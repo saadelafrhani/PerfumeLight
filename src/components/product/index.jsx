@@ -1,12 +1,25 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../../firebase/connection';
 
 const Products = () => {
-    const [selectedOption, setSelectedOption] = useState("");
+    const [products, setProducts] = useState([]);
 
-    const handleSelectChange = (event) => {
-        setSelectedOption(event.target.value);
-        console.log("Selected:", event.target.value);
-    };
+    // Fetch products from Firestore on component mount
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const productsCollection = collection(db, "products");
+                const productSnapshot = await getDocs(productsCollection);
+                const productList = productSnapshot.docs.map(doc => doc.data());
+                setProducts(productList);
+            } catch (error) {
+                console.error("Error fetching products: ", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     return (
         <div className="pt-5 px-4">
@@ -17,55 +30,26 @@ const Products = () => {
                 </h1>
             </div>
 
-            {/* Select, Input, and Search */}
-            <div className="flex flex-col sm:flex-row justify-around items-center pt-8 gap-6 sm:gap-4">
-                {/* Select Dropdown */}
-                <div className="w-full sm:w-auto hidden sm:block">
-                    <select
-                        value={selectedOption}
-                        onChange={handleSelectChange}
-                        className="w-full sm:w-auto bg-black text-white font-semibold cursor-pointer p-2 rounded-md border-none focus:outline-none focus:ring-2 focus:ring-custom-pink"
-                    >
-                        <option value="" disabled>
-                            Select Gender
-                        </option>
-                        <option value="men">Men</option>
-                        <option value="women">Women</option>
-                    </select>
-                </div>
-
-                {/* Display Selected Option */}
-                <div className="text-center sm:mt-0">
-                    {selectedOption && (
-                        <p className="text-lg font-medium">
-                            You selected: <span className="font-bold">{selectedOption}</span>
-                        </p>
-                    )}
-                </div>
-
-                {/* Search Input */}
-                <div className="flex w-full sm:w-1/3">
-                    <input
-                        type="text"
-                        className="flex-grow border-2 border-gray-300 border-r-0 rounded-l-md p-2 text-black focus:outline-none focus:ring-2 focus:ring-gray-400"
-                        placeholder="What are you looking for?"
-                    />
-                    <button
-                        type="submit"
-                        className="bg-gray-300 px-4 py-2 rounded-r-md border-l-2 border-gray-400 hover:scale-110 transform transition-transform duration-200 ease-in-out focus:ring-2 focus:ring-gray-400 focus:outline-none"
+            {/* Product Cards */}
+            <div className="mt-10 flex overflow-x-auto space-x-4">
+                {products.map((product, index) => (
+                    <div
+                        key={index}
+                        className="min-w-[250px] max-w-[300px] flex-shrink-0 border-white border-2 shadow-lg rounded-lg p-4"
                     >
                         <img
-                            src="https://cdn-icons-png.flaticon.com/128/775/775307.png"
-                            alt="Search Icon"
-                            className="h-6 w-6"
+                            src={product.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image'}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-[200px] rounded-lg object-cover mb-4"
                         />
-                    </button>
-                </div>
-            </div>
-
-            {/* Products Section */}
-            <div className="mt-10">
-                {/* Add product-related content here */}
+                        <h1 className="text-lg font-bold mb-2">{product.name}</h1>
+                        <p className="text-sm text-gray-500 mb-4">{product.description}</p>
+                        <h1 className="text-base text-center font-semibold mb-4">${product.price}</h1>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+                            VIEW PRODUCT
+                        </button>
+                    </div>
+                ))}
             </div>
         </div>
     );
