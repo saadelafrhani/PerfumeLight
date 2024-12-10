@@ -1,14 +1,21 @@
-// App.js or App.jsx
-import React from 'react';
-import AdminInputs from './components/AdminInputs'; 
+import React from "react";
+import ReactDOM from "react-dom/client"; 
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-function App() {
+
+//compnonets
+import Admin from "./components/Admin";
+
+const App = () => {
   return (
-    <div className="App">
-      <h1>Product Admin Panel</h1>
-      <AdminInputs /> 
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
-export default App;
+// Create the root and render the App
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);

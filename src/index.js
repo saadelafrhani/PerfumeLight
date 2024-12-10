@@ -5,12 +5,12 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 
+
 // components
 import Navbar from './components/Navbar';
 import Headads from './components/headads';
 import About from './components/about';
 import Products from './components/product';
-
 
 
 
@@ -29,3 +29,7 @@ root.render(
 );
 
 reportWebVitals();
+
+
+
+

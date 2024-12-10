@@ -37,7 +37,7 @@ const Navbar = () => {
             } sm:static sm:flex sm:flex-row sm:space-y-0 sm:space-x-6 sm:h-auto sm:w-auto sm:bg-transparent sm:translate-x-0`}
         >
           <li>
-            <Link to="/career" onClick={() => setMenuOpen(false)}>
+            <Link to="/admin" onClick={() => setMenuOpen(false)}>
               <span className="text-white font-semibold hover:text-custom-pink">
                 News
               </span>
