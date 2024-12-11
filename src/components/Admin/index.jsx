@@ -24,7 +24,7 @@ const Admin = () => {
       await addDoc(productsCollection, {
         name,
         description,
-        price: parseFloat(price),
+        price, // Send price as a string
         imageUrl,
       });
       alert("Product added successfully!");
@@ -72,7 +72,7 @@ const Admin = () => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black" 
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
               required
             />
           </div>

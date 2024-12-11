@@ -37,27 +37,25 @@ const Navbar = () => {
             } sm:static sm:flex sm:flex-row sm:space-y-0 sm:space-x-6 sm:h-auto sm:w-auto sm:bg-transparent sm:translate-x-0`}
         >
           <li>
-            <Link to="/admin" onClick={() => setMenuOpen(false)}>
+            <a href="#news" onClick={() => setMenuOpen(false)}>
               <span className="text-white font-semibold hover:text-custom-pink">
                 News
               </span>
-            </Link>
+            </a>
           </li>
-      
-
           <li>
-            <Link to="/about" onClick={() => setMenuOpen(false)}>
+            <a href="#about" onClick={() => setMenuOpen(false)}>
               <span className="text-white font-semibold hover:text-custom-pink">
                 About
               </span>
-            </Link>
+            </a>
           </li>
           <li>
-            <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            <a href="#products" onClick={() => setMenuOpen(false)}>
               <span className="text-white font-semibold hover:text-custom-pink">
                 Products
               </span>
-            </Link>
+            </a>
           </li>
           <li>
             <Link to="/contact" onClick={() => setMenuOpen(false)}>

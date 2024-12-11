@@ -8,7 +8,6 @@ const Products = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const scrollerRef = useRef(null);
 
-    // Fetch products from Firestore
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -18,7 +17,7 @@ const Products = () => {
                     ...doc.data(),
                 }));
                 setProducts(productsData);
-                setFilteredProducts(productsData); // Set the initial filtered products
+                setFilteredProducts(productsData);
             } catch (error) {
                 console.error("Error fetching products: ", error);
             }
@@ -27,15 +26,18 @@ const Products = () => {
         fetchProducts();
     }, []);
 
-    // Handle search input change
-    const handleSearchChange = (e) => {
-        const value = e.target.value.toLowerCase();
+    const handleSearchChange = async (e) => {
+        const value = e.target.value;
         setSearchTerm(value);
 
-        const filtered = products.filter((product) =>
-            product.name.toLowerCase().includes(value)
-        );
-        setFilteredProducts(filtered);
+        if (value) {
+            const filteredData = products.filter((product) =>
+                product.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredProducts(filteredData);
+        } else {
+            setFilteredProducts(products);
+        }
     };
 
     const scrollLeft = () => {
@@ -47,7 +49,7 @@ const Products = () => {
     };
 
     return (
-        <div className="pt-5 px-4">
+        <div id="products" className="pt-5 px-4">
             {/* Heading */}
             <div className="flex justify-center">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-charm text-center">
@@ -56,7 +58,7 @@ const Products = () => {
             </div>
 
             {/* Search Input */}
-            <div className="flex w-full sm:w-1/3 my-6 mx-auto">
+            <div className="flex w-[80%] mx-auto pt-5">
                 <input
                     type="text"
                     value={searchTerm}
@@ -90,22 +92,17 @@ const Products = () => {
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="min-w-[250px] max-w-[300px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 border-2 border-white"
+                            className="min-w-[250px] sm:min-w-[300px] md:min-w-[350px] lg:min-w-[400px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-6 border-4 border-white"
                         >
-
                             <img
                                 src={product.imageUrl}
                                 alt={product.name}
-                                className="w-full h-[200px] rounded-lg object-cover mb-4"
+                                className="w-full h-[200px] sm:h-[250px] md:h-[300px] rounded-lg object-cover mb-6"
                             />
-                            <h1 className="text-lg font-bold font-charm mb-2">{product.name}</h1>
-                            <p className="text-sm text-gray-500  mb-4">
-                                {product.description}
-                            </p>
-                            <h1 className="text-base font-semibold mb-4">
-                                {product.price}
-                            </h1>
-                            <button className=" text-white px-4 py-2  border-white border-2 rounded-lg hover:bg-gray-600 transition duration-300">
+                            <h1 className="text-xl font-bold font-charm mb-4">{product.name}</h1>
+                            <p className="text-base text-gray-500 mb-6">{product.description}</p>
+                            <h1 className="text-lg font-semibold mb-6">{product.price}</h1>
+                            <button className="text-white px-6 py-3 border-white border-2 rounded-lg hover:bg-gray-600 transition duration-300">
                                 VIEW PRODUCT
                             </button>
                         </div>
@@ -113,7 +110,7 @@ const Products = () => {
                 </div>
 
                 {/* Scroll Buttons */}
-                <div className="flex justify-end gap-2 mt-3  pr-20">
+                <div className="flex justify-center md:justify-end gap-2 mt-3 md:pr-20">
                     <button
                         onClick={scrollLeft}
                         className="p-1 bg-gray-200 rounded-full hover:bg-gray-300 hover:scale-110 transition-all duration-200 shadow-sm"
