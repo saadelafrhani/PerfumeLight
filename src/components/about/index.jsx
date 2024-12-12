@@ -13,8 +13,6 @@ const About = () => {
                 className="h-auto  flex flex-col sm:flex-row justify-around p-10 sm:p-14 gap-10"
             >
 
-
-                {/* Individual Item */}
                 <div className="flex flex-col items-center gap-3 text-center">
                     <img
                         src="https://cdn-user-icons.flaticon.com/116652/116652410/1733248647854.svg?token=exp=1733249548~hmac=eab7e2ae580293f849e4777e1d81b68c"
