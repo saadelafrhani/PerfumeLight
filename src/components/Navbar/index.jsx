@@ -58,16 +58,16 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <Link to="/contact" onClick={() => setMenuOpen(false)}>
+          <a href="#Contact" onClick={() => setMenuOpen(false)}>
               <span className="text-white font-semibold hover:text-custom-pink">
                 Contact
               </span>
-            </Link>
+            </a>
           </li>
         </ul>
       </nav>
 
-      {/* Hamburger Menu */}
+      {/* menu */}
       <button
         className="sm:hidden z-50 flex flex-col justify-center items-center"
         aria-label="Toggle Menu"
