@@ -19,23 +19,25 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
-      <Navbar />
+      
 
       <Routes>
         <Route
           path="/"
           element={
             <div className="pt-5">
+              <Navbar />
               <Headads />
               <About />
               <Products />
+              <Footer />
             </div>
           }
         />
         <Route path="/admin" element={<Admin />} />
       </Routes>
 
-      <Footer />
+      
     </Router>
   </React.StrictMode>
 );
