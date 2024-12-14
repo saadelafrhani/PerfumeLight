@@ -3,28 +3,23 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/connection"; // Make sure this path is correct
 
 const Headads = () => {
-  const [heading, setHeading] = useState("");
-  const [fragrances, setFragrances] = useState([]);
+  const [heading, setHeading] = useState(""); // For the main heading
+  const [fragrances, setFragrances] = useState([]); // For fragrance data
 
   // Fetch data from Firebase when the component mounts
   useEffect(() => {
-    // Set up real-time listener for the headings collection
-    const headingUnsubscribe = onSnapshot(collection(db, "headings"), (snapshot) => {
-      snapshot.forEach((doc) => {
-        setHeading(doc.data().text); // Assuming "text" is the field for heading
-      });
-    });
-
-    // Set up real-time listener for the fragrances collection
-    const fragrancesUnsubscribe = onSnapshot(collection(db, "fragrances"), (snapshot) => {
-      const fragrancesData = snapshot.docs.map((doc) => doc.data());
-      setFragrances(fragrancesData);
+    // Set up real-time listener for the headads collection (which includes heading, title, and imageUrl)
+    const headadsUnsubscribe = onSnapshot(collection(db, "headads"), (snapshot) => {
+      const headadsData = snapshot.docs.map((doc) => doc.data());
+      if (headadsData.length > 0) {
+        setHeading(headadsData[0].heading); // Assuming "heading" is the field for the heading
+        setFragrances(headadsData); // Assuming "title" and "imageUrl" are fields for each ad
+      }
     });
 
     // Cleanup function to unsubscribe from Firestore listeners
     return () => {
-      headingUnsubscribe();
-      fragrancesUnsubscribe();
+      headadsUnsubscribe();
     };
   }, []);
 

@@ -10,7 +10,7 @@ const Products = () => {
     const [quantity, setQuantity] = useState(1);
     const [size, setSize] = useState("5ml");
     const [phone, setPhone] = useState("");
-    const [userName, setUserName] = useState(""); // New state for username
+    const [userName, setUserName] = useState("");
     const scrollerRef = useRef(null);
 
     useEffect(() => {
@@ -45,29 +45,46 @@ const Products = () => {
         }
     };
 
+    // Function to handle order submission
     const handleOrderSubmit = async () => {
-        if (!userName || !phone || !quantity || quantity <= 0) {
-            alert("Please fill in all fields with valid information.");
+        // Validate fields before submitting
+        if (!userName.trim()) {
+            alert("Please enter your name.");
+            return;
+        }
+        if (!phone.trim() || !/^\d{10,}$/.test(phone)) {
+            alert("Please enter a valid phone number.");
+            return;
+        }
+        if (!quantity || quantity <= 0) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+        if (!selectedProduct) {
+            alert("No product selected.");
             return;
         }
 
         try {
-            // Add order data to Firestore
+            // Add order to Firestore
             await addDoc(collection(db, "orders"), {
-                userName, // Include user name in the order
+                userName: userName.trim(),
+                phone: phone.trim(),
                 productName: selectedProduct.name,
                 size,
                 quantity,
-                phone,
+                timestamp: new Date().toISOString(),
             });
             alert("Order placed successfully!");
+
+            // Reset fields after submission
             setSelectedProduct(null); // Close modal
             setQuantity(1); // Reset quantity
-            setPhone(""); // Reset phone number
-            setUserName(""); // Reset user name
+            setPhone(""); // Reset phone
+            setUserName(""); // Reset username
         } catch (error) {
-            console.error("Error placing order:", error);
-            alert("Failed to place the order.");
+            console.error("Error placing order: ", error);
+            alert("Failed to place the order. Please try again later.");
         }
     };
 
@@ -171,12 +188,11 @@ const Products = () => {
                 </button>
             </div>
 
-            {/* Modal */}
+
             {selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-4xl flex">
-                        {/* Image Section */}
-                        <div className="w-[50%] h-[80%] flex justify-center items-center">
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
+                    <div className="bg-black p-6 rounded-lg shadow-lg w-[90%] max-w-4xl flex">
+                        <div className="w-[50%] flex justify-center items-center">
                             <img
                                 src={selectedProduct.imageUrl}
                                 alt={selectedProduct.name}
@@ -184,34 +200,29 @@ const Products = () => {
                             />
                         </div>
 
-                        {/* Form Section */}
-                        <div className="w-[50%] h-[80%] flex flex-col justify-between pl-6">
-                            <h1 className="text-2xl font-bold mb-4">{selectedProduct.name}</h1>
+                        <div className="w-[50%] flex flex-col justify-between pl-6">
+                            <h1 className="text-2xl  font-bold mb-4 text-black">{selectedProduct.name}</h1>
                             <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-
-                                <div> {/* Product Name (Disabled) */}
-                                    <label className="block text-gray-700 mb-1">Product Name</label>
+                                <div>
+                                    <label className="block text-white mb-1">Perfume</label>
                                     <input
                                         type="text"
                                         value={selectedProduct.name}
                                         disabled
-                                        className="w-full text-black border-gray-300 rounded p-2 bg-gray-100 cursor-not-allowed"
+                                        className="w-full text-white font-charm bg-black border-gray-300 rounded p-2"
                                     />
                                 </div>
-                                {/* User Name */}
                                 <div>
-                                    <label className="block text-gray-700 mb-1">User Name</label>
+                                    <label className="block text-white mb-1">User Name</label>
                                     <input
                                         type="text"
                                         value={userName}
                                         onChange={(e) => setUserName(e.target.value)}
                                         className="w-full text-black border-gray-300 rounded p-2"
                                     />
-
                                 </div>
-                                {/* Phone */}
                                 <div>
-                                    <label className="block text-gray-700 mb-1">Phone</label>
+                                    <label className="block text-white mb-1">Phone</label>
                                     <input
                                         type="text"
                                         value={phone}
@@ -219,9 +230,8 @@ const Products = () => {
                                         className="w-full text-black border-gray-300 rounded p-2"
                                     />
                                 </div>
-                                {/* Size */}
                                 <div>
-                                    <label className="block text-gray-700 mb-1">Size</label>
+                                    <label className="block text-white mb-1">Size</label>
                                     <select
                                         value={size}
                                         onChange={(e) => setSize(e.target.value)}
@@ -231,10 +241,8 @@ const Products = () => {
                                         <option value="10ml">10ml</option>
                                     </select>
                                 </div>
-
-                                {/* Quantity */}
                                 <div>
-                                    <label className="block text-gray-700 mb-1">Quantity</label>
+                                    <label className="block text-white mb-1">Quantity</label>
                                     <input
                                         type="number"
                                         value={quantity}
@@ -242,17 +250,12 @@ const Products = () => {
                                         className="w-full text-black border-gray-300 rounded p-2"
                                     />
                                 </div>
-
-
-                                {/* Submit Button */}
                                 <button
                                     onClick={handleOrderSubmit}
-                                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                                    className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
                                 >
                                     Submit Order
                                 </button>
-
-                                {/* Close Button */}
                                 <button
                                     onClick={() => setSelectedProduct(null)}
                                     className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 mt-2"
@@ -264,6 +267,7 @@ const Products = () => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };

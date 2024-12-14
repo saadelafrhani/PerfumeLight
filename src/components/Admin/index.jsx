@@ -11,23 +11,56 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
+  const [showOrders, setShowOrders] = useState(false); // Added state for orders visibility
   const [imageLinks, setImageLinks] = useState(["", "", ""]);
   const [titles, setTitles] = useState(["", "", ""]);
-  const [products, setProducts] = useState([]);  // Store all products
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   // Fetch products from Firestore
   useEffect(() => {
-    const fetchProducts = async () => {
-      const productsCollection = collection(db, "products");
-      const productSnapshot = await getDocs(productsCollection);
-      const productList = productSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setProducts(productList);
-    };
-
     if (showForm) {
-      fetchProducts();  // Fetch products when the form is visible
+      const fetchProducts = async () => {
+        const productsCollection = collection(db, "products");
+        const productSnapshot = await getDocs(productsCollection);
+        const productList = productSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setProducts(productList);
+      };
+
+      fetchProducts();
     }
   }, [showForm]);
+
+  useEffect(() => {
+    if (showImageForm) {
+      const fetchNews = async () => {
+        const adsCollection = collection(db, "headads");
+        const adsSnapshot = await getDocs(adsCollection);
+        const adsList = adsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setImageLinks(adsList);
+      };
+
+      fetchNews();
+    }
+  }, [showImageForm]);
+
+  // Fetch orders from Firestore (Only once)
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const ordersCollection = collection(db, "orders");
+      const orderSnapshot = await getDocs(ordersCollection);
+      const orderList = orderSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+      setOrders(orderList);
+    };
+
+    // Fetch orders only if it's not already fetched
+    if (orders.length === 0) {
+      fetchOrders();
+    }
+  }, [orders.length]);
 
   // Handle adding product
   const handleSubmitProduct = async (e) => {
@@ -47,12 +80,23 @@ const Admin = () => {
       setDescription("");
       setPrice("");
       setImageUrl("");
-      setShowForm(false);  // Hide the form after successful submission
+      setShowForm(false);
     } catch (error) {
       console.error("Error adding product:", error.message);
       alert("Failed to add product.");
     } finally {
       setLoading(false);
+    }
+  };
+  const handleDeleteNews = async (newsId) => {
+    const newsDoc = doc(db, "headads", newsId);
+    try {
+      await deleteDoc(newsDoc);
+      alert("News deleted successfully!");
+      setImageLinks(imageLinks.filter((news) => news.id !== newsId));
+    } catch (error) {
+      console.error("Error deleting news:", error.message);
+      alert("Failed to delete news.");
     }
   };
 
@@ -62,10 +106,23 @@ const Admin = () => {
     try {
       await deleteDoc(productDoc);
       alert("Product deleted successfully!");
-      setProducts(products.filter((product) => product.id !== productId));  // Remove deleted product from state
+      setProducts(products.filter((product) => product.id !== productId));
     } catch (error) {
       console.error("Error deleting product:", error.message);
       alert("Failed to delete product.");
+    }
+  };
+
+  // Handle deleting order
+  const handleDeleteOrder = async (orderId) => {
+    const orderDoc = doc(db, "orders", orderId);
+    try {
+      await deleteDoc(orderDoc);
+      alert("Order deleted successfully!");
+      setOrders(orders.filter((order) => order.id !== orderId));
+    } catch (error) {
+      console.error("Error deleting order:", error.message);
+      alert("Failed to delete order.");
     }
   };
 
@@ -102,7 +159,7 @@ const Admin = () => {
     }
   };
 
-  // Handle Image link and title changes dynamically
+  // Handle dynamic changes for Image Links and Titles
   const handleImageLinkChange = (e, idx) => {
     const updatedLinks = [...imageLinks];
     updatedLinks[idx] = e.target.value;
@@ -116,7 +173,7 @@ const Admin = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-5">
+    <div className="flex justify-center min-h-screen p-5">
       <div className="w-full max-w-4xl">
         <h1 className="text-3xl font-bold text-center mb-6">Admin Panel</h1>
 
@@ -134,6 +191,12 @@ const Admin = () => {
           >
             {showImageForm ? "Hide News Form" : "Add News"}
           </button>
+          <button
+            className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition"
+            onClick={() => setShowOrders(!showOrders)} // Toggle visibility of orders
+          >
+            {showOrders ? "Hide Orders" : "See Orders"}
+          </button>
         </div>
 
         {/* Show Products */}
@@ -149,14 +212,11 @@ const Admin = () => {
                     key={product.id}
                     className="bg-gray-100 p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
                   >
-                    {/* Product Image */}
                     <img
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-48 object-cover mb-4 rounded-md"
                     />
-
-                    {/* Product Info */}
                     <div className="flex flex-col">
                       <h3 className="font-bold text-lg">{product.name}</h3>
                       <p className="text-gray-700">{product.description}</p>
@@ -175,55 +235,73 @@ const Admin = () => {
           </div>
         )}
 
+        {/* Show Orders */}
+        {showOrders && orders.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-2xl text-center font-semibold mb-4">All Orders</h2>
+            <ul className="flex flex-wrap gap-4 justify-center">
+              {orders.map((order) => (
+                <li
+                  key={order.id}
+                  className="bg-black border-2 border-white p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
+                >
+                  <div className="flex flex-col">
+                    <h3 className="font-bold text-lg text-white">Phone: {order.phone}</h3>
+                    <p className="text-white">Product Name: {order.productName}</p>
+                    <p className="text-white">Quantity: {order.quantity}</p>
+                    <p className="text-white">Size: {order.size}</p>
+                    <p className="text-white">Timestamp: {new Date(order.timestamp).toLocaleString()}</p>
+                    <p className="text-white">User Name: {order.userName}</p>
+                    <button
+                      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                      onClick={() => handleDeleteOrder(order.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Product Form */}
         {showForm && (
-          <form className=" p-6 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 mx-auto flex justify-center flex-col rounded-lg shadow-md" onSubmit={handleSubmitProduct}>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Product Name</label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="description" className="block text-gray-700 font-medium mb-2">Description</label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="price" className="block text-gray-700 font-medium mb-2">Price</label>
-              <input
-                id="price"
-                type="text"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="imageUrl" className="block text-gray-700 font-medium mb-2">Image URL</label>
-              <input
-                id="imageUrl"
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              />
-            </div>
+          <form
+            className="p-6 w-full sm:w-1/2 md:w-1/3 mx-auto shadow-lg border rounded-lg font-black bg-white"
+            onSubmit={handleSubmitProduct}
+          >
+            <h2 className="text-2xl font-bold text-center mb-4">Add Product</h2>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Product Name"
+              className="w-full p-3 mb-4 border rounded-md"
+            />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Product Description"
+              className="w-full p-3 mb-4 border rounded-md"
+            />
+            <input
+              type="text"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Product Price"
+              className="w-full p-3 mb-4 border rounded-md"
+            />
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="Image URL"
+              className="w-full p-3 mb-4 border rounded-md"
+            />
             <button
               type="submit"
-              className={`w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`w-full p-3 rounded-md ${loading ? 'bg-gray-500' : 'bg-green-500'} text-white font-bold`}
               disabled={loading}
             >
               {loading ? "Adding..." : "Add Product"}
@@ -231,51 +309,81 @@ const Admin = () => {
           </form>
         )}
 
-        {/* Images Form */}
+
         {showImageForm && (
-          <form className="bg-gray-100 p-6 rounded-lg shadow-md" onSubmit={handleSubmitImages}>
-            <div className="mb-4">
-              <label htmlFor="heading" className="block text-gray-700 font-medium mb-2">Heading</label>
-              <input
-                id="heading"
-                type="text"
-                value={heading}
-                onChange={(e) => setHeading(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              />
-            </div>
+          <div className="mb-6">
+            <h2 className="text-2xl text-center font-semibold mb-4">All News</h2>
+            <ul className="flex flex-wrap gap-4 justify-center">
+              {imageLinks.length === 0 ? (
+                <p>No news available.</p>
+              ) : (
+                imageLinks.map((news, idx) => (
+                  <li key={news.id} className="bg-gray-100 p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+                    <img
+                      src={news.imageUrl}
+                      alt={news.title}
+                      className="w-full h-48 object-cover mb-4 rounded-md"
+                    />
+                    <div className="flex flex-col">
+                      <h3 className="font-bold text-lg">{news.title}</h3>
+                      <p className="text-gray-700">{news.heading}</p>
+                      <button
+                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                        onClick={() => handleDeleteNews(news.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        )}
+
+        {/* Image News Form */}
+        {showImageForm && (
+          <form
+            className="p-6 w-full sm:w-1/2 md:w-1/3 mx-auto shadow-lg border rounded-lg bg-white"
+            onSubmit={handleSubmitImages}
+          >
+            <h2 className="text-2xl font-bold text-center mb-4 text-black">Add News Images</h2>
+            <input
+              type="text"
+              value={heading}
+              onChange={(e) => setHeading(e.target.value)}
+              placeholder="Heading"
+              className="w-full p-3 font-black mb-4 border rounded-md text-black"
+            />
             {imageLinks.map((link, idx) => (
-              <div className="mb-4" key={idx}>
-                <label htmlFor={`imageLink-${idx}`} className="block text-gray-700 font-medium mb-2">{`Image Link ${idx + 1}`}</label>
+              <div key={idx} className="mb-4">
                 <input
-                  id={`imageLink-${idx}`}
                   type="url"
-                  value={link}
+                  value={link} j
                   onChange={(e) => handleImageLinkChange(e, idx)}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                  required
+                  placeholder={`Image ${idx + 1} URL`}
+                  className="w-full font-black p-3 border rounded-md text-black"
                 />
-                <label htmlFor={`title-${idx}`} className="block text-gray-700 font-medium mb-2">{`Title ${idx + 1}`}</label>
                 <input
-                  id={`title-${idx}`}
                   type="text"
                   value={titles[idx]}
                   onChange={(e) => handleTitleChange(e, idx)}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 text-black"
-                  required
+                  placeholder={`Image ${idx + 1} Title`}
+                  className="w-full font-black p-3 mb-4 border rounded-md text-black"
                 />
               </div>
             ))}
             <button
               type="submit"
-              className={`w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`w-full p-3 rounded-md ${loading ? 'bg-gray-500' : 'bg-green-500'} text-white font-bold`}
               disabled={loading}
             >
-              {loading ? "Adding..." : "Add Images"}
+              {loading ? "Adding..." : "Add News"}
             </button>
           </form>
+
         )}
+
       </div>
     </div>
   );
