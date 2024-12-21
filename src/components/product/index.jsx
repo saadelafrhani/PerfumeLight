@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/connection";
 
 const Products = () => {
@@ -12,6 +12,8 @@ const Products = () => {
     const [phone, setPhone] = useState("");
     const [userName, setUserName] = useState("");
     const scrollerRef = useRef(null);
+    const [cart, setCart] = useState([]);
+    const [cartModalOpen, setCartModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -31,6 +33,16 @@ const Products = () => {
         fetchProducts();
     }, []);
 
+    const handleAddToCart = () => {
+        const cartItem = {
+            name: selectedProduct.name,
+            size,
+            quantity,
+        };
+        setCart([...cart, cartItem]);
+        setSelectedProduct(null); // Close the product modal
+    };
+
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -45,71 +57,116 @@ const Products = () => {
         }
     };
 
-    // Function to handle order submission
-    const handleOrderSubmit = async () => {
-        // Validate fields before submitting
-        if (!userName.trim()) {
-            alert("Please enter your name.");
-            return;
-        }
-        if (!phone.trim() || !/^\d{10,}$/.test(phone)) {
-            alert("Please enter a valid phone number.");
-            return;
-        }
-        if (!quantity || quantity <= 0) {
-            alert("Please enter a valid quantity.");
-            return;
-        }
-        if (!selectedProduct) {
-            alert("No product selected.");
-            return;
-        }
-
-        try {
-            // Add order to Firestore
-            await addDoc(collection(db, "orders"), {
-                userName: userName.trim(),
-                phone: phone.trim(),
-                productName: selectedProduct.name,
-                size,
-                quantity,
-                timestamp: new Date().toISOString(),
-            });
-            alert("Order placed successfully!");
-
-            // Reset fields after submission
-            setSelectedProduct(null); // Close modal
-            setQuantity(1); // Reset quantity
-            setPhone(""); // Reset phone
-            setUserName(""); // Reset username
-        } catch (error) {
-            console.error("Error placing order: ", error);
-            alert("Failed to place the order. Please try again later.");
-        }
-    };
-
     const scrollLeft = () => {
         if (scrollerRef.current) {
-            scrollerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+            scrollerRef.current.scrollBy({ left: -200, behavior: "smooth" });
         }
     };
 
     const scrollRight = () => {
         if (scrollerRef.current) {
-            scrollerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+            scrollerRef.current.scrollBy({ left: 200, behavior: "smooth" });
         }
+    };
+
+    const handleSendOrder = (e) => {
+        // Placeholder for order submission
+        e.preventDefault();
+        console.log("Order Submitted: ", { cart, userName, phone });
+        // You can add logic for handling the order submission, like sending it to a backend.
     };
 
     return (
         <div id="products" className="pt-5 px-4">
-            {/* Heading */}
-            <div className="flex justify-center">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-charm text-center">
-                    Plupare Products
-                </h1>
-            </div>
+            {/* Cart Button */}
+            <button
+                onClick={() => setCartModalOpen(true)}
+                className="fixed bottom-10 right-1/2 translate-x-1/2 bg-gray-800 text-white w-[80px] h-[80px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 transition duration-300 z-50"
+            >
+                Cart
+            </button>
 
-            {/* Search Input */}
+            {/* Cart Modal */}
+            {cartModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+                    <div className="bg-gray-900 text-white w-[90%] max-w-5xl p-6 rounded-lg shadow-lg flex">
+                        {/* Left: Cart Items */}
+                        <div className="w-1/2 pr-4 border-r border-gray-700">
+                            <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+                            {cart.length > 0 ? (
+                                <ul className="space-y-4">
+                                    {cart.map((item, index) => (
+                                        <li
+                                            key={index}
+                                            className="flex justify-between items-center border-b border-gray-700 pb-2"
+                                        >
+                                            <div>
+                                                <h3 className="text-lg font-semibold">{item.name}</h3>
+                                                <p className="text-sm">Size: {item.size}</p>
+                                                <p className="text-sm">Quantity: {item.quantity}</p>
+                                            </div>
+                                            <button
+                                                onClick={() =>
+                                                    setCart(cart.filter((_, i) => i !== index))
+                                                }
+                                                className="text-red-500 hover:text-red-600"
+                                            >
+                                                Remove
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>Your cart is empty.</p>
+                            )}
+                        </div>
+
+                        {/* Right: Order Form */}
+                        <div className="w-1/2 pl-4">
+                            <h2 className="text-2xl font-bold mb-4">Order Details</h2>
+                            <form
+                                onSubmit={handleSendOrder}
+                                className="space-y-4"
+                            >
+                                <div>
+                                    <label className="block text-white mb-1">Name</label>
+                                    <input
+                                        type="text"
+                                        value={userName}
+                                        onChange={(e) => setUserName(e.target.value)}
+                                        className="w-full text-black border-gray-300 rounded p-2"
+                                        placeholder="Enter your name"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-white mb-1">Phone</label>
+                                    <input
+                                        type="text"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        className="w-full text-black border-gray-300 rounded p-2"
+                                        placeholder="Enter your phone number"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                                >
+                                    Send Order
+                                </button>
+                                <button
+                                    onClick={() => setCartModalOpen(false)}
+                                    className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded mt-2"
+                                >
+                                    Close
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Search Bar */}
             <div className="flex w-[80%] mx-auto pt-5">
                 <input
                     type="text"
@@ -136,8 +193,8 @@ const Products = () => {
                     ref={scrollerRef}
                     className="flex overflow-x-auto gap-6 scrollbar-hide py-4"
                     style={{
-                        scrollbarWidth: 'none',
-                        msOverflowStyle: 'none',
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
                     }}
                 >
                     {filteredProducts.map((product) => (
@@ -164,112 +221,67 @@ const Products = () => {
                 </div>
             </div>
 
-            {/* Scroll Buttons */}
-            <div className="flex justify-center md:justify-end gap-2 mt-3 md:pr-20">
-                <button
-                    onClick={scrollLeft}
-                    className="p-1 bg-gray-200 rounded-full hover:bg-gray-300 hover:scale-110 transition-all duration-200 shadow-sm"
-                >
-                    <img
-                        src="https://img.icons8.com/?size=24&id=26146&format=png"
-                        alt="Scroll Left"
-                        className="w-10 h-10"
-                    />
-                </button>
-                <button
-                    onClick={scrollRight}
-                    className="p-1 bg-gray-200 rounded-full hover:bg-gray-300 hover:scale-110 transition-all duration-200 shadow-sm"
-                >
-                    <img
-                        src="https://img.icons8.com/?size=24&id=26147&format=png"
-                        alt="Scroll Right"
-                        className="w-10 h-10"
-                    />
-                </button>
-            </div>
-
-
+            {/* Product Modal */}
             {selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
                     <div className="bg-black p-6 rounded-lg shadow-lg w-[90%] max-w-4xl flex">
-                        <div className="w-[50%] flex justify-center items-center">
+                        <div className="w-[30%] flex justify-center items-center">
                             <img
                                 src={selectedProduct.imageUrl}
                                 alt={selectedProduct.name}
-                                className="w-full h-full object-cover rounded-lg"
+                                className="w-full h-[250px] object-cover rounded-lg"
                             />
                         </div>
+                        <div className="w-[70%] px-6 text-white">
+                            <h2 className="text-3xl font-bold mb-4">{selectedProduct.name}</h2>
+                            <p className="text-lg text-gray-400 mb-4">{selectedProduct.description}</p>
+                            <h2 className="text-2xl font-semibold mb-6">{selectedProduct.price}</h2>
 
-                        <div className="w-[50%] flex flex-col justify-between pl-6">
-                            <h1 className="text-2xl  font-bold mb-4 text-black">{selectedProduct.name}</h1>
-                            <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-                                <div>
-                                    <label className="block text-white mb-1">Perfume</label>
-                                    <input
-                                        type="text"
-                                        value={selectedProduct.name}
-                                        disabled
-                                        className="w-full text-white font-charm bg-black border-gray-300 rounded p-2"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-white mb-1">User Name</label>
-                                    <input
-                                        type="text"
-                                        value={userName}
-                                        onChange={(e) => setUserName(e.target.value)}
-                                        className="w-full text-black border-gray-300 rounded p-2"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-white mb-1">Phone</label>
-                                    <input
-                                        type="text"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        className="w-full text-black border-gray-300 rounded p-2"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-white mb-1">Size</label>
-                                    <select
-                                        value={size}
-                                        onChange={(e) => setSize(e.target.value)}
-                                        className="w-full text-black border-gray-300 rounded p-2"
-                                    >
-                                        <option value="5ml">5ml</option>
-                                        <option value="10ml">10ml</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-white mb-1">Quantity</label>
-                                    <input
-                                        type="number"
-                                        value={quantity}
-                                        onChange={(e) => setQuantity(Number(e.target.value))}
-                                        className="w-full text-black border-gray-300 rounded p-2"
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleOrderSubmit}
-                                    className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
+                            <div className="mb-6">
+                                <label className="block text-white mb-2">Quantity</label>
+                                <input
+                                    type="number"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Number(e.target.value))}
+                                    min="1"
+                                    className="w-full text-black border-gray-300 rounded p-2"
+                                />
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-white mb-2">Size</label>
+                                <select
+                                    value={size}
+                                    onChange={(e) => setSize(e.target.value)}
+                                    className="w-full text-black border-gray-300 rounded p-2"
                                 >
-                                    Submit Order
-                                </button>
-                                <button
-                                    onClick={() => setSelectedProduct(null)}
-                                    className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 mt-2"
-                                >
-                                    Close
-                                </button>
-                            </form>
+                                    <option value="5ml">5ml</option>
+                                    <option value="10ml">10ml</option>
+                                    <option value="15ml">15ml</option>
+                                </select>
+                            </div>
+
+                            <button
+                                onClick={handleAddToCart}
+                                className="w-full bg-blue-500 text-white py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
+                            >
+                                ADD TO CART
+                            </button>
+                            <button
+                                onClick={() => setSelectedProduct(null)}
+                                className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 hover:bg-red-600 transition duration-300"
+                            >
+                                CLOSE
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
 
 export default Products;
+
+
+//  need to make it work 
