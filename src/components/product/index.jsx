@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore"; // Added `addDoc` here
 import { db } from "../../firebase/connection";
 
 const Products = () => {
@@ -11,6 +11,7 @@ const Products = () => {
     const [size, setSize] = useState("5ml");
     const [phone, setPhone] = useState("");
     const [userName, setUserName] = useState("");
+    const [address, setAddress] = useState("");
     const scrollerRef = useRef(null);
     const [cart, setCart] = useState([]);
     const [cartModalOpen, setCartModalOpen] = useState(false);
@@ -69,16 +70,39 @@ const Products = () => {
         }
     };
 
-    const handleSendOrder = (e) => {
-        // Placeholder for order submission
+    const handleSendOrder = async (e) => {
         e.preventDefault();
-        console.log("Order Submitted: ", { cart, userName, phone });
-        // You can add logic for handling the order submission, like sending it to a backend.
+
+        if (!userName || !phone || cart.length === 0) {
+            alert("Please fill all fields and add items to your cart.");
+            return;
+        }
+
+        const orderData = {
+            userName,
+            phone,
+            cart,
+            address: "Default Address", // Replace with a variable if an address input is added
+            orderDate: new Date().toISOString(),
+        };
+
+        try {
+            const ordersCollection = collection(db, "orders");
+            await addDoc(ordersCollection, orderData); // Fixed the usage of `addDoc`
+
+            alert("Order sent successfully!");
+            setCart([]); // Clear cart
+            setUserName("");
+            setPhone("");
+            setCartModalOpen(false); // Close the cart modal
+        } catch (error) {
+            console.error("Error sending order: ", error);
+            alert("Failed to send order. Please try again later.");
+        }
     };
 
     return (
         <div id="products" className="pt-5 px-4">
-            {/* Cart Button */}
             <button
                 onClick={() => setCartModalOpen(true)}
                 className="fixed bottom-10 right-1/2 translate-x-1/2 bg-gray-800 text-white w-[80px] h-[80px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 transition duration-300 z-50"
@@ -124,10 +148,7 @@ const Products = () => {
                         {/* Right: Order Form */}
                         <div className="w-1/2 pl-4">
                             <h2 className="text-2xl font-bold mb-4">Order Details</h2>
-                            <form
-                                onSubmit={handleSendOrder}
-                                className="space-y-4"
-                            >
+                            <form onSubmit={handleSendOrder} className="space-y-4">
                                 <div>
                                     <label className="block text-white mb-1">Name</label>
                                     <input
@@ -148,12 +169,24 @@ const Products = () => {
                                         placeholder="Enter your phone number"
                                     />
                                 </div>
+                                <div>
+                                    <label className="block text-white mb-1">Address</label>
+                                    <input
+                                        type="text"
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        className="w-full text-black border-gray-300 rounded p-2"
+                                        placeholder="Enter your address"
+                                    />
+                                </div>
                                 <button
                                     type="submit"
+                                    onClick={handleSendOrder}
                                     className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded"
                                 >
                                     Send Order
                                 </button>
+
                                 <button
                                     onClick={() => setCartModalOpen(false)}
                                     className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded mt-2"
@@ -284,4 +317,3 @@ const Products = () => {
 export default Products;
 
 
-//  need to make it work 

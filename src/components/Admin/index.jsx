@@ -11,7 +11,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
-  const [showOrders, setShowOrders] = useState(false); // Added state for orders visibility
+  const [showOrders, setShowOrders] = useState(false);
   const [imageLinks, setImageLinks] = useState(["", "", ""]);
   const [titles, setTitles] = useState(["", "", ""]);
   const [products, setProducts] = useState([]);
@@ -31,6 +31,7 @@ const Admin = () => {
     }
   }, [showForm]);
 
+  // Fetch image links
   useEffect(() => {
     if (showImageForm) {
       const fetchNews = async () => {
@@ -49,14 +50,10 @@ const Admin = () => {
     const fetchOrders = async () => {
       const ordersCollection = collection(db, "orders");
       const orderSnapshot = await getDocs(ordersCollection);
-      const orderList = orderSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id
-      }));
+      const orderList = orderSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setOrders(orderList);
     };
 
-    // Fetch orders only if it's not already fetched
     if (orders.length === 0) {
       fetchOrders();
     }
@@ -88,41 +85,17 @@ const Admin = () => {
       setLoading(false);
     }
   };
-  const handleDeleteNews = async (newsId) => {
-    const newsDoc = doc(db, "headads", newsId);
-    try {
-      await deleteDoc(newsDoc);
-      alert("News deleted successfully!");
-      setImageLinks(imageLinks.filter((news) => news.id !== newsId));
-    } catch (error) {
-      console.error("Error deleting news:", error.message);
-      alert("Failed to delete news.");
-    }
-  };
 
-  // Handle deleting product
-  const handleDeleteProduct = async (productId) => {
-    const productDoc = doc(db, "products", productId);
+  // Handle delete actions
+  const handleDelete = async (collectionName, itemId, stateSetter, stateArray) => {
+    const docRef = doc(db, collectionName, itemId);
     try {
-      await deleteDoc(productDoc);
-      alert("Product deleted successfully!");
-      setProducts(products.filter((product) => product.id !== productId));
+      await deleteDoc(docRef);
+      alert(`${collectionName.slice(0, -1)} deleted successfully!`);
+      stateSetter(stateArray.filter((item) => item.id !== itemId));
     } catch (error) {
-      console.error("Error deleting product:", error.message);
-      alert("Failed to delete product.");
-    }
-  };
-
-  // Handle deleting order
-  const handleDeleteOrder = async (orderId) => {
-    const orderDoc = doc(db, "orders", orderId);
-    try {
-      await deleteDoc(orderDoc);
-      alert("Order deleted successfully!");
-      setOrders(orders.filter((order) => order.id !== orderId));
-    } catch (error) {
-      console.error("Error deleting order:", error.message);
-      alert("Failed to delete order.");
+      console.error(`Error deleting ${collectionName.slice(0, -1)}:`, error.message);
+      alert(`Failed to delete ${collectionName.slice(0, -1)}.`);
     }
   };
 
@@ -193,7 +166,7 @@ const Admin = () => {
           </button>
           <button
             className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition"
-            onClick={() => setShowOrders(!showOrders)} // Toggle visibility of orders
+            onClick={() => setShowOrders(!showOrders)} 
           >
             {showOrders ? "Hide Orders" : "See Orders"}
           </button>
@@ -208,10 +181,7 @@ const Admin = () => {
                 <p>No products available.</p>
               ) : (
                 products.map((product) => (
-                  <li
-                    key={product.id}
-                    className="bg-gray-100 p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
-                  >
+                  <li key={product.id} className="bg-gray-100 p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
@@ -223,7 +193,7 @@ const Admin = () => {
                       <p className="text-gray-500">{`Price: $${product.price}`}</p>
                       <button
                         className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-                        onClick={() => handleDeleteProduct(product.id)}
+                        onClick={() => handleDelete("products", product.id, setProducts, products)}
                       >
                         Delete
                       </button>
@@ -235,7 +205,7 @@ const Admin = () => {
           </div>
         )}
 
-        {/* Show Orders */}
+        {/* Show Orders
         {showOrders && orders.length > 0 && (
           <div className="mb-6">
             <h2 className="text-2xl text-center font-semibold mb-4">All Orders</h2>
@@ -248,142 +218,98 @@ const Admin = () => {
                   <div className="flex flex-col">
                     <h3 className="font-bold text-lg text-white">Phone: {order.phone}</h3>
                     <p className="text-white">Product Name: {order.productName}</p>
-                    <p className="text-white">Quantity: {order.quantity}</p>
-                    <p className="text-white">Size: {order.size}</p>
-                    <p className="text-white">Timestamp: {new Date(order.timestamp).toLocaleString()}</p>
-                    <p className="text-white">User Name: {order.userName}</p>
+                    <p className="text-white">Product Image: {order.productImage}</p>
+                    <p className="text-white">Order ID: {order.id}</p>
                     <button
                       className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-                      onClick={() => handleDeleteOrder(order.id)}
+                      onClick={() => handleDelete("orders", order.id, setOrders, orders)}
                     >
-                      Delete
+                      Delete Order
                     </button>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
-        )}
+        )} */}
 
-        {/* Product Form */}
+        
+
+        {/* Add Product Form */}
         {showForm && (
-          <form
-            className="p-6 w-full sm:w-1/2 md:w-1/3 mx-auto shadow-lg border rounded-lg font-black bg-white"
-            onSubmit={handleSubmitProduct}
-          >
-            <h2 className="text-2xl font-bold text-center mb-4">Add Product</h2>
+          <form onSubmit={handleSubmitProduct} className="flex flex-col gap-4 mb-6">
             <input
               type="text"
+              placeholder="Product Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Product Name"
-              className="w-full p-3 mb-4 border rounded-md"
+              className="p-2 border border-gray-300 rounded-md"
             />
             <textarea
+              placeholder="Product Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Product Description"
-              className="w-full p-3 mb-4 border rounded-md"
+              className="p-2 border border-gray-300 rounded-md"
+            />
+            <input
+              type="number"
+              placeholder="Product Price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="p-2 border border-gray-300 rounded-md"
             />
             <input
               type="text"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="Product Price"
-              className="w-full p-3 mb-4 border rounded-md"
-            />
-            <input
-              type="url"
+              placeholder="Image URL"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="Image URL"
-              className="w-full p-3 mb-4 border rounded-md"
+              className="p-2 border border-gray-300 rounded-md"
             />
             <button
               type="submit"
-              className={`w-full p-3 rounded-md ${loading ? 'bg-gray-500' : 'bg-green-500'} text-white font-bold`}
-              disabled={loading}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
             >
               {loading ? "Adding..." : "Add Product"}
             </button>
           </form>
         )}
 
-
+        {/* Add News Form */}
         {showImageForm && (
-          <div className="mb-6">
-            <h2 className="text-2xl text-center font-semibold mb-4">All News</h2>
-            <ul className="flex flex-wrap gap-4 justify-center">
-              {imageLinks.length === 0 ? (
-                <p>No news available.</p>
-              ) : (
-                imageLinks.map((news, idx) => (
-                  <li key={news.id} className="bg-gray-100 p-4 rounded-lg mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-                    <img
-                      src={news.imageUrl}
-                      alt={news.title}
-                      className="w-full h-48 object-cover mb-4 rounded-md"
-                    />
-                    <div className="flex flex-col">
-                      <h3 className="font-bold text-lg">{news.title}</h3>
-                      <p className="text-gray-700">{news.heading}</p>
-                      <button
-                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-                        onClick={() => handleDeleteNews(news.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
-        )}
-
-        {/* Image News Form */}
-        {showImageForm && (
-          <form
-            className="p-6 w-full sm:w-1/2 md:w-1/3 mx-auto shadow-lg border rounded-lg bg-white"
-            onSubmit={handleSubmitImages}
-          >
-            <h2 className="text-2xl font-bold text-center mb-4 text-black">Add News Images</h2>
+          <form onSubmit={handleSubmitImages} className="flex flex-col gap-4">
             <input
               type="text"
+              placeholder="Heading"
               value={heading}
               onChange={(e) => setHeading(e.target.value)}
-              placeholder="Heading"
-              className="w-full p-3 font-black mb-4 border rounded-md text-black"
+              className="p-2 border border-gray-300 rounded-md"
             />
             {imageLinks.map((link, idx) => (
-              <div key={idx} className="mb-4">
+              <div key={idx} className="flex gap-4">
                 <input
-                  type="url"
-                  value={link} j
+                  type="text"
+                  placeholder={`Image URL ${idx + 1}`}
+                  value={link}
                   onChange={(e) => handleImageLinkChange(e, idx)}
-                  placeholder={`Image ${idx + 1} URL`}
-                  className="w-full font-black p-3 border rounded-md text-black"
+                  className="p-2 border border-gray-300 rounded-md"
                 />
                 <input
                   type="text"
+                  placeholder={`Title ${idx + 1}`}
                   value={titles[idx]}
                   onChange={(e) => handleTitleChange(e, idx)}
-                  placeholder={`Image ${idx + 1} Title`}
-                  className="w-full font-black p-3 mb-4 border rounded-md text-black"
+                  className="p-2 border border-gray-300 rounded-md"
                 />
               </div>
             ))}
             <button
               type="submit"
-              className={`w-full p-3 rounded-md ${loading ? 'bg-gray-500' : 'bg-green-500'} text-white font-bold`}
-              disabled={loading}
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
             >
-              {loading ? "Adding..." : "Add News"}
+              {loading ? "Adding..." : "Add Images"}
             </button>
           </form>
-
         )}
-
       </div>
     </div>
   );
