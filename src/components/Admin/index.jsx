@@ -12,7 +12,11 @@ const Admin = () => {
   const [showForm, setShowForm] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
   const [showOrders, setShowOrders] = useState(false);
-  const [imageLinks, setImageLinks] = useState(["", "", ""]);
+  const [imageLinks, setImageLinks] = useState([
+    { link: "", title: "" },
+    { link: "", title: "" },
+    { link: "", title: "" },
+  ]);
   const [titles, setTitles] = useState(["", "", ""]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -58,6 +62,7 @@ const Admin = () => {
       fetchImages();
     }
   }, [showImageForm]);
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -163,16 +168,26 @@ const Admin = () => {
     }
   };
 
-  const handleImageLinkChange = (e, idx) => {
+  const handleImageLinkChange = (e, idx, key) => {
     const updatedLinks = [...imageLinks];
-    updatedLinks[idx] = e.target.value;
+    updatedLinks[idx][key] = e.target.value; // Update the appropriate field
     setImageLinks(updatedLinks);
   };
+
 
   const handleTitleChange = (e, idx) => {
     const updatedTitles = [...titles];
     updatedTitles[idx] = e.target.value;
     setTitles(updatedTitles);
+  };
+
+  const handleAddImage = () => {
+    setImageLinks([...imageLinks, { link: "", title: "" }]); // Adds a new object with empty `link` and `title`
+  };
+  const handleDeleteImage = (idx) => {
+    const updatedLinks = [...imageLinks];
+    updatedLinks.splice(idx, 1); // Removes the selected image by index
+    setImageLinks(updatedLinks);
   };
 
   return (
@@ -283,7 +298,6 @@ const Admin = () => {
       )}
 
 
-      {/* Add Images
       {showImageForm && (
         <form onSubmit={handleSubmitImages} className="flex flex-col gap-4 mb-6 max-w-xl mx-auto">
           <input
@@ -291,23 +305,23 @@ const Admin = () => {
             placeholder="Heading"
             value={heading}
             onChange={(e) => setHeading(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md"
+            className="p-2 border text-black border-gray-300 rounded-md"
           />
-          {imageLinks.map((link, idx) => (
-            <div key={idx} className="flex gap-4">
+          {imageLinks.map((item, idx) => (
+            <div key={idx} className="flex gap-4 items-center">
               <input
                 type="text"
                 placeholder={`Image Link ${idx + 1}`}
-                value={link}
-                onChange={(e) => handleImageLinkChange(e, idx)}
-                className="p-2 border border-gray-300 rounded-md w-full"
+                value={item.link}
+                onChange={(e) => handleImageLinkChange(e, idx, "link")}
+                className="p-2 border text-black border-gray-300 rounded-md w-full"
               />
               <input
                 type="text"
                 placeholder={`Title ${idx + 1}`}
-                value={titles[idx]}
-                onChange={(e) => handleTitleChange(e, idx)}
-                className="p-2 border border-gray-300 rounded-md w-full"
+                value={item.title}
+                onChange={(e) => handleImageLinkChange(e, idx, "title")}
+                className="p-2 border text-black border-gray-300 rounded-md w-full"
               />
             </div>
           ))}
@@ -315,10 +329,10 @@ const Admin = () => {
             type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
           >
-            {loading ? "Adding..." : "Add Images"}
+            {loading ? "Saving..." : "Save Images"}
           </button>
         </form>
-      )} */}
+      )}
 
       {showOrders && orders.length > 0 && (
         <div className="mb-6">
@@ -327,23 +341,24 @@ const Admin = () => {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="bg-black border-2 border-white p-4 rounded-lg w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
+                className="bg-black border-2 border-white p-4 rounded-lg w-full  sm:w-1/2 md:w-1/3 lg:w-1/4"
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-1">
                   {/* User Information */}
-                  <h3 className="font-bold text-lg text-white">Name: {order.userName}</h3>
+                  <h3 className="font-bold text-lg text-center text-white">{order.userName}</h3>
                   <p className="text-white">Phone: {order.phone}</p>
                   <p className="text-white">Address: {order.address}</p>
 
                   {/* Iterate over the cart items (show all products) */}
                   {order.cart && order.cart.length > 0 && (
                     <div className="mt-4">
-                      <h4 className="font-semibold text-white">Products:</h4>
+                      <h4 className="font-semibold  text-blue-400">Products:</h4>
 
                       {/* Display all products in the cart */}
                       {order.cart.map((product, index) => (
                         <div key={index} className="text-white mt-2">
                           <p className="font-semibold">Product {index + 1}: {product.name}</p>
+                          <p > Product Name : {product.name} </p>
                           <p>Quantity: {product.quantity}</p>
                           <p>Size: {product.size}</p>
                         </div>

@@ -25,7 +25,7 @@ root.render(
         <Route
           path="/"
           element={
-            <div className="pt-5">
+            <div className="pt-5 " >
               <Navbar />
               <Headads />
               <About />

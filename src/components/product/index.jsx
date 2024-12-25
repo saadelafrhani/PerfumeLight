@@ -105,17 +105,19 @@ const Products = () => {
         <div id="products" className="pt-5 px-4">
             <button
                 onClick={() => setCartModalOpen(true)}
-                className="fixed bottom-10 right-1/2 translate-x-1/2 bg-gray-800 text-white w-[80px] h-[80px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 transition duration-300 z-50"
+                className="fixed flex justify-center items-center pt-3 bottom-10 right-1/2 translate-x-1/2 bg-transparent text-white w-[60px] h-[60px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 backdrop-blur-sm transition duration-300 z-50"
             >
-                Cart
+                <img src="https://img.icons8.com/?size=100&id=KqV6G325egdQ&format=png&color=FA5252" alt="carticon" width="40px" height="40px" />
             </button>
+
+
 
             {/* Cart Modal */}
             {cartModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-                    <div className="bg-gray-900 text-white w-[90%] max-w-5xl p-6 rounded-lg shadow-lg flex">
+                    <div className="bg-gray-900 text-white w-[90%] max-w-5xl p-6 rounded-lg shadow-lg flex flex-col sm:flex-row overflow-y-auto max-h-[90vh]">
                         {/* Left: Cart Items */}
-                        <div className="w-1/2 pr-4 border-r border-gray-700">
+                        <div className="w-full sm:w-1/2 sm:pr-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:mb-0 mb-6">
                             <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
                             {cart.length > 0 ? (
                                 <ul className="space-y-4">
@@ -135,7 +137,12 @@ const Products = () => {
                                                 }
                                                 className="text-red-500 hover:text-red-600"
                                             >
-                                                Remove
+                                                <img
+                                                    src="https://img.icons8.com/?size=100&id=7837&format=png&color=FA5252"
+                                                    alt="delete icon"
+                                                    height="30px"
+                                                    width="30px"
+                                                />
                                             </button>
                                         </li>
                                     ))}
@@ -146,7 +153,7 @@ const Products = () => {
                         </div>
 
                         {/* Right: Order Form */}
-                        <div className="w-1/2 pl-4">
+                        <div className="w-full sm:w-1/2 sm:pl-4">
                             <h2 className="text-2xl font-bold mb-4">Order Details</h2>
                             <form onSubmit={handleSendOrder} className="space-y-4">
                                 <div>
@@ -182,14 +189,14 @@ const Products = () => {
                                 <button
                                     type="submit"
                                     onClick={handleSendOrder}
-                                    className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                                    className="w-full border-2  hover:bg-blue-950 text-white py-2 rounded"
                                 >
                                     Send Order
                                 </button>
 
                                 <button
                                     onClick={() => setCartModalOpen(false)}
-                                    className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded mt-2"
+                                    className="w-full border-2 hover:bg-red-600 text-white py-2 rounded mt-2"
                                 >
                                     Close
                                 </button>
@@ -198,6 +205,7 @@ const Products = () => {
                     </div>
                 </div>
             )}
+
 
             {/* Search Bar */}
             <div className="flex w-[80%] mx-auto pt-5">
@@ -257,19 +265,22 @@ const Products = () => {
             {/* Product Modal */}
             {selectedProduct && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-                    <div className="bg-black p-6 rounded-lg shadow-lg w-[90%] max-w-4xl flex">
-                        <div className="w-[30%] flex justify-center items-center">
+                    <div className="bg-black p-6 rounded-lg shadow-lg w-[90%] max-w-4xl flex flex-col sm:flex-row max-h-[80vh] overflow-y-auto">
+                        {/* Product Image */}
+                        <div className="w-full sm:w-[30%] flex justify-center items-center mb-6 sm:mb-0">
                             <img
                                 src={selectedProduct.imageUrl}
                                 alt={selectedProduct.name}
                                 className="w-full h-[250px] object-cover rounded-lg"
                             />
                         </div>
-                        <div className="w-[70%] px-6 text-white">
+                        {/* Product Details */}
+                        <div className="w-full sm:w-[70%] px-6 text-white">
                             <h2 className="text-3xl font-bold mb-4">{selectedProduct.name}</h2>
                             <p className="text-lg text-gray-400 mb-4">{selectedProduct.description}</p>
                             <h2 className="text-2xl font-semibold mb-6">{selectedProduct.price}</h2>
 
+                            {/* Quantity */}
                             <div className="mb-6">
                                 <label className="block text-white mb-2">Quantity</label>
                                 <input
@@ -281,6 +292,7 @@ const Products = () => {
                                 />
                             </div>
 
+                            {/* Size Selection */}
                             <div className="mb-6">
                                 <label className="block text-white mb-2">Size</label>
                                 <select
@@ -294,15 +306,16 @@ const Products = () => {
                                 </select>
                             </div>
 
+                            {/* Action Buttons */}
                             <button
                                 onClick={handleAddToCart}
-                                className="w-full bg-blue-500 text-white py-3 rounded-lg mt-4 hover:bg-blue-600 transition duration-300"
+                                className="w-full border-2 text-white py-3 rounded-lg mt-4 hover:bg-gray-500 transition duration-300"
                             >
                                 ADD TO CART
                             </button>
                             <button
                                 onClick={() => setSelectedProduct(null)}
-                                className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 hover:bg-red-600 transition duration-300"
+                                className="w-full border-2 text-white py-3 rounded-lg mt-4 hover:bg-red-600 transition duration-300"
                             >
                                 CLOSE
                             </button>
@@ -310,6 +323,7 @@ const Products = () => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };
