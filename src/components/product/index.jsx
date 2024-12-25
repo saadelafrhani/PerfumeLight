@@ -82,7 +82,7 @@ const Products = () => {
             userName,
             phone,
             cart,
-            address: "Default Address", // Replace with a variable if an address input is added
+            address,
             orderDate: new Date().toISOString(),
         };
 
