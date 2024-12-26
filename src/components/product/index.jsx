@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore"; // Added `addDoc` here
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../../firebase/connection";
 
 const Products = () => {
@@ -15,6 +15,9 @@ const Products = () => {
     const scrollerRef = useRef(null);
     const [cart, setCart] = useState([]);
     const [cartModalOpen, setCartModalOpen] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState(""); // Added state for alert type
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -34,6 +37,15 @@ const Products = () => {
         fetchProducts();
     }, []);
 
+    const showAlert = (message, type) => {
+        setAlertMessage(message);
+        setAlertType(type); // Set alert type
+        setAlertVisible(true);
+        setTimeout(() => {
+            setAlertVisible(false); // Hide alert after 3 seconds
+        }, 3000);
+    };
+
     const handleAddToCart = () => {
         const cartItem = {
             name: selectedProduct.name,
@@ -41,7 +53,8 @@ const Products = () => {
             quantity,
         };
         setCart([...cart, cartItem]);
-        setSelectedProduct(null); // Close the product modal
+        setSelectedProduct(null);
+        showAlert("Product added to the cart!", "success");
     };
 
     const handleSearchChange = (e) => {
@@ -74,7 +87,7 @@ const Products = () => {
         e.preventDefault();
 
         if (!userName || !phone || cart.length === 0) {
-            alert("Please fill all fields and add items to your cart.");
+            showAlert("Please fill all fields and add items to your cart.", "error");
             return;
         }
 
@@ -88,16 +101,16 @@ const Products = () => {
 
         try {
             const ordersCollection = collection(db, "orders");
-            await addDoc(ordersCollection, orderData); // Fixed the usage of `addDoc`
+            await addDoc(ordersCollection, orderData);
 
-            alert("Order sent successfully!");
             setCart([]); // Clear cart
             setUserName("");
             setPhone("");
             setCartModalOpen(false); // Close the cart modal
+            showAlert("Great! Your order has been sent.", "success");
         } catch (error) {
             console.error("Error sending order: ", error);
-            alert("Failed to send order. Please try again later.");
+            showAlert("Failed to send order. Please try again later.", "error");
         }
     };
 
@@ -105,16 +118,34 @@ const Products = () => {
         <div id="products" className="pt-5 px-4">
             <button
                 onClick={() => setCartModalOpen(true)}
-                className="fixed flex justify-center items-center pt-3 bottom-10 right-1/2 translate-x-1/2 bg-transparent text-white w-[60px] h-[60px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 backdrop-blur-sm transition duration-300 z-50"
+                className="fixed flex justify-center items-center pt-3 top-48 right-14 lg:right-44 translate-x-1/2 bg-transparent text-white w-[60px] h-[60px] rounded-full shadow-lg border-2 border-dashed border-white hover:bg-gray-700 backdrop-blur-sm transition duration-300 z-50"
             >
                 <img src="https://img.icons8.com/?size=100&id=KqV6G325egdQ&format=png&color=FA5252" alt="carticon" width="40px" height="40px" />
             </button>
 
-
+            {alertVisible && (
+                <div
+                    className={`fixed bottom-10 right-10 z-50 px-4 py-3 rounded-b shadow-md ${alertType === "error" ? "bg-red-100 border-red-500 text-red-900" : "bg-teal-100 border-teal-500 text-teal-900"}`}
+                    role="alert"
+                >
+                    <div className="flex">
+                        <div className="py-1">
+                            <img
+                                src={alertType === "error" ? "https://img.icons8.com/?size=100&id=R8PWwzNXLnaX&format=png&color=FA5252" : "https://img.icons8.com/?size=100&id=81438&format=png&color=000000"}
+                                alt="alert-icon"
+                                className="w-6 h-6 mr-4"
+                            />
+                        </div>
+                        <div>
+                            <p className="font-bold">{alertMessage}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Cart Modal */}
             {cartModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
                     <div className="bg-gray-900 text-white w-[90%] max-w-5xl p-6 rounded-lg shadow-lg flex flex-col sm:flex-row overflow-y-auto max-h-[90vh]">
                         {/* Left: Cart Items */}
                         <div className="w-full sm:w-1/2 sm:pr-4 border-b sm:border-b-0 sm:border-r border-gray-700 sm:mb-0 mb-6">
@@ -164,6 +195,7 @@ const Products = () => {
                                         onChange={(e) => setUserName(e.target.value)}
                                         className="w-full text-black border-gray-300 rounded p-2"
                                         placeholder="Enter your name"
+
                                     />
                                 </div>
                                 <div>
@@ -174,6 +206,7 @@ const Products = () => {
                                         onChange={(e) => setPhone(e.target.value)}
                                         className="w-full text-black border-gray-300 rounded p-2"
                                         placeholder="Enter your phone number"
+
                                     />
                                 </div>
                                 <div>
@@ -184,12 +217,12 @@ const Products = () => {
                                         onChange={(e) => setAddress(e.target.value)}
                                         className="w-full text-black border-gray-300 rounded p-2"
                                         placeholder="Enter your address"
+
                                     />
                                 </div>
                                 <button
                                     type="submit"
-                                    onClick={handleSendOrder}
-                                    className="w-full border-2  hover:bg-blue-950 text-white py-2 rounded"
+                                    className="w-full border-2 hover:bg-blue-950 text-white py-2 rounded"
                                 >
                                     Send Order
                                 </button>
@@ -205,7 +238,6 @@ const Products = () => {
                     </div>
                 </div>
             )}
-
 
             {/* Search Bar */}
             <div className="flex w-[80%] mx-auto pt-5">
@@ -323,11 +355,8 @@ const Products = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
 
 export default Products;
-
-

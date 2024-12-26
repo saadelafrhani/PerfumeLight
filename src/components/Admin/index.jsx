@@ -9,10 +9,13 @@ const Admin = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [showOrders, setShowOrders] = useState(false); 
+  const [showOrders, setShowOrders] = useState(false);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   // Fetch products, orders, users, and image links
   useEffect(() => {
@@ -34,8 +37,6 @@ const Admin = () => {
       fetchProducts();
     }
   }, [showForm]);
-
-  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -112,6 +113,53 @@ const Admin = () => {
     }
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === process.env.REACT_APP_USERNAME && password === process.env.REACT_APP_PSW) {
+      setIsLoggedIn(true);
+    } else {
+      alert('Invalid credentials');
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="max-w-sm mx-auto p-4 font-sans">
+        <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block font-semibold mb-2">Username:</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block font-semibold mb-2">Password:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-5">
       <h1 className="text-3xl font-bold text-center mb-6">Admin Panel</h1>
@@ -124,7 +172,7 @@ const Admin = () => {
         >
           {showForm ? "Hide Products" : "See Products"}
         </button>
-       
+
         <button
           className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition"
           onClick={() => setShowOrders(!showOrders)}
@@ -197,7 +245,7 @@ const Admin = () => {
                   <div className="flex flex-col">
                     <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                     <p className="text-gray-700">{product.description}</p>
-                    <p className="text-green-500 font-semibold mt-2">${product.price}</p>
+                    <p className="text-green-500 font-semibold mt-2">{product.price}</p>
                     <button
                       onClick={() =>
                         handleDelete("products", product.id, setProducts, products)
@@ -213,8 +261,6 @@ const Admin = () => {
           </ul>
         </div>
       )}
-
-    
 
       {showOrders && orders.length > 0 && (
         <div className="mb-6">
@@ -258,7 +304,6 @@ const Admin = () => {
                 </div>
               </div>
             ))}
-
           </div>
         </div>
       )}
