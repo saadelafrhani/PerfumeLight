@@ -7,17 +7,9 @@ const Admin = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [heading, setHeading] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [showImageForm, setShowImageForm] = useState(false);
-  const [showOrders, setShowOrders] = useState(false);
-  const [imageLinks, setImageLinks] = useState([
-    { link: "", title: "" },
-    { link: "", title: "" },
-    { link: "", title: "" },
-  ]);
-  const [titles, setTitles] = useState(["", "", ""]);
+  const [showOrders, setShowOrders] = useState(false); 
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
@@ -43,26 +35,7 @@ const Admin = () => {
     }
   }, [showForm]);
 
-  useEffect(() => {
-    if (showImageForm) {
-      const fetchImages = async () => {
-        try {
-          setLoading(true);
-          const adsCollection = collection(db, "headads");
-          const adsSnapshot = await getDocs(adsCollection);
-          const adsList = adsSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-          setImageLinks(adsList.map((ad) => ad.imageUrl)); // Extract image URLs
-        } catch (error) {
-          console.error("Error fetching images:", error);
-          alert("Failed to fetch images.");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchImages();
-    }
-  }, [showImageForm]);
-
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -139,57 +112,6 @@ const Admin = () => {
     }
   };
 
-  const handleSubmitImages = async (e) => {
-    e.preventDefault();
-    if (imageLinks.some((link) => !link) || titles.some((title) => !title) || !heading) {
-      alert("Please fill in all image links, titles, and heading.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const adsCollection = collection(db, "headads");
-      for (let i = 0; i < imageLinks.length; i++) {
-        await addDoc(adsCollection, {
-          imageUrl: imageLinks[i],
-          title: titles[i],
-          heading,
-        });
-      }
-      alert("Images added successfully!");
-      setImageLinks(["", "", ""]);
-      setTitles(["", "", ""]);
-      setHeading("");
-    } catch (error) {
-      console.error("Error adding images:", error.message);
-      alert("Failed to add images.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleImageLinkChange = (e, idx, key) => {
-    const updatedLinks = [...imageLinks];
-    updatedLinks[idx][key] = e.target.value; // Update the appropriate field
-    setImageLinks(updatedLinks);
-  };
-
-
-  const handleTitleChange = (e, idx) => {
-    const updatedTitles = [...titles];
-    updatedTitles[idx] = e.target.value;
-    setTitles(updatedTitles);
-  };
-
-  const handleAddImage = () => {
-    setImageLinks([...imageLinks, { link: "", title: "" }]); // Adds a new object with empty `link` and `title`
-  };
-  const handleDeleteImage = (idx) => {
-    const updatedLinks = [...imageLinks];
-    updatedLinks.splice(idx, 1); // Removes the selected image by index
-    setImageLinks(updatedLinks);
-  };
-
   return (
     <div className="container mx-auto p-5">
       <h1 className="text-3xl font-bold text-center mb-6">Admin Panel</h1>
@@ -202,12 +124,7 @@ const Admin = () => {
         >
           {showForm ? "Hide Products" : "See Products"}
         </button>
-        <button
-          className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition"
-          onClick={() => setShowImageForm(!showImageForm)}
-        >
-          {showImageForm ? "Hide News Form" : "Add News"}
-        </button>
+       
         <button
           className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition"
           onClick={() => setShowOrders(!showOrders)}
@@ -297,42 +214,7 @@ const Admin = () => {
         </div>
       )}
 
-
-      {showImageForm && (
-        <form onSubmit={handleSubmitImages} className="flex flex-col gap-4 mb-6 max-w-xl mx-auto">
-          <input
-            type="text"
-            placeholder="Heading"
-            value={heading}
-            onChange={(e) => setHeading(e.target.value)}
-            className="p-2 border text-black border-gray-300 rounded-md"
-          />
-          {imageLinks.map((item, idx) => (
-            <div key={idx} className="flex gap-4 items-center">
-              <input
-                type="text"
-                placeholder={`Image Link ${idx + 1}`}
-                value={item.link}
-                onChange={(e) => handleImageLinkChange(e, idx, "link")}
-                className="p-2 border text-black border-gray-300 rounded-md w-full"
-              />
-              <input
-                type="text"
-                placeholder={`Title ${idx + 1}`}
-                value={item.title}
-                onChange={(e) => handleImageLinkChange(e, idx, "title")}
-                className="p-2 border text-black border-gray-300 rounded-md w-full"
-              />
-            </div>
-          ))}
-          <button
-            type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-          >
-            {loading ? "Saving..." : "Save Images"}
-          </button>
-        </form>
-      )}
+    
 
       {showOrders && orders.length > 0 && (
         <div className="mb-6">
