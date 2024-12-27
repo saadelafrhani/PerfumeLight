@@ -266,8 +266,9 @@ const Products = () => {
                 </button>
             </div>
 
+
             {/* Products Section */}
-            <div className="mt-10 relative">
+            <div className="mt-10 relative ">
                 <div
                     ref={scrollerRef}
                     className="flex overflow-x-auto gap-4 sm:gap-6 scrollbar-hide py-4"
@@ -297,6 +298,32 @@ const Products = () => {
                             </button>
                         </div>
                     ))}
+                </div>
+
+                               {/* Scroll Buttons for large screens */}
+                <div className="hidden lg:flex justify-end space-x-4 absolute -bottom-14 right-10">
+                    <button
+                        onClick={() => scrollerRef.current.scrollBy({ left: -400, behavior: "smooth" })}
+                        className="bg-black border-2 text-white p-2 rounded-full hover:bg-gray-600 transition duration-500"
+                    >
+                        <img
+                            src="https://img.icons8.com/?size=100&id=y9vwKkj0dWA1&format=png&color=FFFFFF"
+                            alt="Scroll Left"
+                            width="30px"
+                            height="30px"
+                        />
+                    </button>
+                    <button
+                        onClick={() => scrollerRef.current.scrollBy({ left: 400, behavior: "smooth" })}
+                        className="bg-black border-2 text-white p-2 rounded-full hover:bg-gray-600 transition duration-300"
+                    >
+                        <img
+                            src="https://img.icons8.com/?size=100&id=2xbZEKRgdfYa&format=png&color=FFFFFF"
+                            alt="Scroll Right"
+                            width="30px"
+                            height="30px"
+                        />
+                    </button>
                 </div>
             </div>
 
