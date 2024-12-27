@@ -15,7 +15,7 @@ const About = () => {
 
                 <div className="flex flex-col items-center gap-3 text-center">
                     <img
-                        src="https://cdn-user-icons.flaticon.com/116652/116652410/1733248647854.svg?token=exp=1733249548~hmac=eab7e2ae580293f849e4777e1d81b68c"
+                        src="https://img.icons8.com/?size=100&id=MfLkKii7uW63&format=png&color=FFFFFF"
                         alt="premium-quality-icon"
                         className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
                     />
@@ -32,7 +32,7 @@ const About = () => {
                 {/* Copy Item for Consistency */}
                 <div className="flex flex-col items-center gap-3 text-center">
                     <img
-                        src="https://cdn-user-icons.flaticon.com/116652/116652410/1733250035401.svg?token=exp=1733250935~hmac=121f8362086dba49bf6a474d2fad7c89"
+                        src="https://img.icons8.com/?size=100&id=1ay0cDk955Il&format=png&color=FFFFFF"
                         alt="tailored-fragrance-options"
                         className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
                     />
@@ -48,7 +48,7 @@ const About = () => {
                 {/* Third Item */}
                 <div className="flex flex-col items-center gap-3 text-center">
                     <img
-                        src="https://cdn-user-icons.flaticon.com/116652/116652410/1733250226455.svg?token=exp=1733251127~hmac=d289e06f5e0add639d2122a67fe0ba1c"
+                        src="https://img.icons8.com/?size=100&id=61792&format=png&color=FFFFFF"
                         alt="quick-secure-delivery"
                         className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
                     />
