@@ -169,10 +169,11 @@ const Products = () => {
                                                 className="text-red-500 hover:text-red-600"
                                             >
                                                 <img
-                                                    src="https://img.icons8.com/?size=100&id=7837&format=png&color=FA5252"
+                                                    src="https://img.icons8.com/?size=100&id=G01ACMKXfdpJ&format=png&color=FA5252"
                                                     alt="delete icon"
                                                     height="30px"
                                                     width="30px"
+                                                    className="hover:scale-110 transform transition duration-200"
                                                 />
                                             </button>
                                         </li>
