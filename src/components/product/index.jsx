@@ -266,7 +266,7 @@ const Products = () => {
                 </button>
             </div>
 
-                       {/* Products Section */}
+            {/* Products Section */}
             <div className="mt-10 relative">
                 <div
                     ref={scrollerRef}
@@ -279,12 +279,12 @@ const Products = () => {
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className=" sm:min-w-[200px] md:min-w-[250px] lg:min-w-[300px] xl:min-w-[350px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 xs:p-6 sm:p-8 border-4 border-white"
+                            className="sm:min-w-[200px] md:min-w-[250px] lg:min-w-[300px] xl:min-w-[350px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 xs:p-6 sm:p-8 border-4 border-white"
                         >
                             <img
                                 src={product.imageUrl}
                                 alt={product.name}
-                                className="w-full h-auto max-h-[100px] xs:max-h-[150px] sm:max-h-[200px] md:max-h-[250px] lg:max-h-[300px] xl:max-h-[350px] rounded-lg object-contain mb-4 xs:mb-6 sm:mb-8"
+                                className="h-auto max-h-[100px] xs:max-h-[150px] sm:max-h-[200px] md:max-h-[250px] lg:max-h-[300px] xl:max-h-[350px] rounded-lg object-contain mb-4 xs:mb-6 sm:mb-8"
                             />
                             <h1 className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold font-charm mb-2 xs:mb-4 sm:mb-6">{product.name}</h1>
                             <p className="text-xs xs:text-sm sm:text-base md:text-lg text-gray-500 mb-2 xs:mb-4 sm:mb-6">{product.description}</p>
