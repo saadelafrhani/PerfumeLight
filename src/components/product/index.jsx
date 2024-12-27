@@ -266,7 +266,7 @@ const Products = () => {
                 </button>
             </div>
 
-                       {/* Products Section */}
+            {/* Products Section */}
             <div className="mt-10 relative">
                 <div
                     ref={scrollerRef}
