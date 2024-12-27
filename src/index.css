@@ -65,3 +65,11 @@ code {
 .animate-delay-3 {
   animation-delay: 0.6s;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
