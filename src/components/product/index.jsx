@@ -279,7 +279,7 @@ const Products = () => {
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="min-w-[150px] xs:min-w-[180px] sm:min-w-[200px] md:min-w-[250px] lg:min-w-[300px] xl:min-w-[350px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 xs:p-6 sm:p-8 border-4 border-white"
+                            className="sm:min-w-[200px] md:min-w-[250px] lg:min-w-[300px] xl:min-w-[350px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 xs:p-6 sm:p-8 border-4 border-white"
                         >
                             <img
                                 src={product.imageUrl}
