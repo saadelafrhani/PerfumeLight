@@ -287,7 +287,7 @@ const Admin = () => {
                       {/* Display all products in the cart */}
                       {order.cart.map((product, index) => (
                         <div key={index} className="text-white mt-2">
-                          <p className="font-semibold">Product {index + 1}: {product.name}</p>
+                          <p className="font-semibold">Product {index + 1}</p>
                           <p > Product Name : {product.name} </p>
                           <p>Quantity: {product.quantity}</p>
                           <p>Size: {product.size}</p>
