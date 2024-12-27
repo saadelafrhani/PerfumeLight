@@ -38,21 +38,21 @@ const Navbar = () => {
         >
           <li>
             <a href="#news" onClick={() => setMenuOpen(false)}>
-              <span className="text-white font-semibold hover:text-custom-pink">
+              <span className="text-white font-semibold hover:text-cyan-600">
                 News
               </span>
             </a>
           </li>
           <li>
             <a href="#about" onClick={() => setMenuOpen(false)}>
-              <span className="text-white font-semibold hover:text-custom-pink">
+              <span className="text-white font-semibold hover:text-cyan-600">
                 About
               </span>
             </a>
           </li>
           <li>
             <a href="#products" onClick={() => setMenuOpen(false)}>
-              <span className="text-white font-semibold hover:text-custom-pink">
+            <span className="text-white font-semibold hover:text-cyan-600">
                 Products
               </span>
             </a>
