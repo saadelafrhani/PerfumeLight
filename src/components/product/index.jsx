@@ -107,7 +107,7 @@ const Products = () => {
             setUserName("");
             setPhone("");
             setCartModalOpen(false); // Close the cart modal
-            showAlert("Great! Your order has been sent.", "success");
+            showAlert("Great! Your order has been sent. We will call you soon.", "success");
         } catch (error) {
             console.error("Error sending order: ", error);
             showAlert("Failed to send order. Please try again later.", "error");

@@ -17,6 +17,16 @@ const Admin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+
+  // admin login 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === process.env.REACT_APP_USERNAME && password === process.env.REACT_APP_PSW) {
+      setIsLoggedIn(true);
+    } else {
+      alert('Invalid credentials');
+    }
+  };
   // Fetch products, orders, users, and image links
   useEffect(() => {
     if (showForm) {
@@ -113,14 +123,6 @@ const Admin = () => {
     }
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (username === process.env.REACT_APP_USERNAME && password === process.env.REACT_APP_PSW) {
-      setIsLoggedIn(true);
-    } else {
-      alert('Invalid credentials');
-    }
-  };
 
   if (!isLoggedIn) {
     return (
