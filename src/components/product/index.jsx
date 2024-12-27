@@ -266,11 +266,11 @@ const Products = () => {
                 </button>
             </div>
 
-            {/* Products Section */}
+                       {/* Products Section */}
             <div className="mt-10 relative">
                 <div
                     ref={scrollerRef}
-                    className="flex overflow-x-auto gap-6 scrollbar-hide py-4"
+                    className="flex overflow-x-auto gap-4 sm:gap-6 scrollbar-hide py-4"
                     style={{
                         scrollbarWidth: "none",
                         msOverflowStyle: "none",
@@ -279,19 +279,19 @@ const Products = () => {
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="min-w-[200px] sm:min-w-[250px] md:min-w-[300px] lg:min-w-[350px] xl:min-w-[400px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-6 sm:p-8 border-4 border-white"
+                            className="min-w-[150px] xs:min-w-[200px] sm:min-w-[250px] md:min-w-[300px] lg:min-w-[350px] xl:min-w-[400px] flex-shrink-0 flex justify-center items-center flex-col shadow-lg rounded-lg p-4 xs:p-6 sm:p-8 border-4 border-white"
                         >
                             <img
                                 src={product.imageUrl}
                                 alt={product.name}
-                                className="w-full h-auto max-h-[150px] sm:max-h-[200px] md:max-h-[250px] lg:max-h-[300px] xl:max-h-[350px] rounded-lg object-contain mb-6 sm:mb-8"
+                                className="w-full h-auto max-h-[100px] xs:max-h-[150px] sm:max-h-[200px] md:max-h-[250px] lg:max-h-[300px] xl:max-h-[350px] rounded-lg object-contain mb-4 xs:mb-6 sm:mb-8"
                             />
-                            <h1 className="text-lg sm:text-xl md:text-2xl font-bold font-charm mb-4 sm:mb-6">{product.name}</h1>
-                            <p className="text-sm sm:text-base md:text-lg text-gray-500 mb-4 sm:mb-6">{product.description}</p>
-                            <h1 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6">{product.price}</h1>
+                            <h1 className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold font-charm mb-2 xs:mb-4 sm:mb-6">{product.name}</h1>
+                            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-gray-500 mb-2 xs:mb-4 sm:mb-6">{product.description}</p>
+                            <h1 className="text-sm xs:text-base sm:text-lg md:text-xl font-semibold mb-2 xs:mb-4 sm:mb-6">{product.price}</h1>
                             <button
                                 onClick={() => setSelectedProduct(product)}
-                                className="text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 border-white border-2 rounded-lg hover:bg-gray-600 transition duration-300"
+                                className="text-white px-2 xs:px-4 sm:px-6 md:px-8 py-1 xs:py-2 sm:py-3 border-white border-2 rounded-lg hover:bg-gray-600 transition duration-300"
                             >
                                 VIEW PRODUCT
                             </button>
