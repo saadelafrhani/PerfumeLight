@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 
+// will add them to firebase and adminpanel
+
 const Headads = () => {
   return (
     <div className="flex flex-col gap-6 px-4 ">

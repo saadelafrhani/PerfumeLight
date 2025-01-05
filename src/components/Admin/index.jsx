@@ -27,7 +27,7 @@ const Admin = () => {
       alert('Invalid credentials');
     }
   };
-  // Fetch products, orders, users, and image links
+  // Fetch products, orders, users 
   useEffect(() => {
     if (showForm) {
       const fetchProducts = async () => {

@@ -17,7 +17,7 @@ const Products = () => {
     const [cartModalOpen, setCartModalOpen] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
-    const [alertType, setAlertType] = useState(""); // Added state for alert type
+    const [alertType, setAlertType] = useState(""); 
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -39,10 +39,10 @@ const Products = () => {
 
     const showAlert = (message, type) => {
         setAlertMessage(message);
-        setAlertType(type); // Set alert type
+        setAlertType(type); 
         setAlertVisible(true);
         setTimeout(() => {
-            setAlertVisible(false); // Hide alert after 3 seconds
+            setAlertVisible(false);
         }, 3000);
     };
 

@@ -13,7 +13,7 @@ const Navbar = () => {
     setSelectedOption(value);
     if (value) {
       navigate(`/${value}`);
-      setMenuOpen(false); // Close menu after selection
+      setMenuOpen(false); // close the menu after selecting an option
     }
   };
 
