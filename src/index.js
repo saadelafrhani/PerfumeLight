@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 
-// Components
+// import  Components
 import Navbar from './components/Navbar';
 import Headads from './components/headads';
 import About from './components/about';

@@ -19,6 +19,8 @@ const Products = () => {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertType, setAlertType] = useState(""); 
 
+
+    
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -37,6 +39,7 @@ const Products = () => {
         fetchProducts();
     }, []);
 
+
     const showAlert = (message, type) => {
         setAlertMessage(message);
         setAlertType(type); 
@@ -46,17 +49,21 @@ const Products = () => {
         }, 3000);
     };
 
+
+
     const handleAddToCart = () => {
         const cartItem = {
             name: selectedProduct.name,
             size,
             quantity,
         };
+        // adding to cart
         setCart([...cart, cartItem]);
         setSelectedProduct(null);
         showAlert("Product added to the cart!", "success");
     };
 
+    // check value  user input
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
@@ -70,7 +77,8 @@ const Products = () => {
             setFilteredProducts(products);
         }
     };
-
+       
+    // scroll btns
     const scrollLeft = () => {
         if (scrollerRef.current) {
             scrollerRef.current.scrollBy({ left: -200, behavior: "smooth" });
@@ -86,11 +94,13 @@ const Products = () => {
     const handleSendOrder = async (e) => {
         e.preventDefault();
 
+        // check not empty
         if (!userName || !phone || cart.length === 0) {
             showAlert("Please fill all fields and add items to your cart.", "error");
             return;
         }
 
+        // get info for orderdata
         const orderData = {
             userName,
             phone,
@@ -99,6 +109,7 @@ const Products = () => {
             orderDate: new Date().toISOString(),
         };
 
+        // add tofirebase
         try {
             const ordersCollection = collection(db, "orders");
             await addDoc(ordersCollection, orderData);

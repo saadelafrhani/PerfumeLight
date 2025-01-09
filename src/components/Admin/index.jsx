@@ -18,7 +18,7 @@ const Admin = () => {
   const [password, setPassword] = useState('');
 
 
-  // admin login 
+  // admin login  working with .env for hide login user and pswrd...
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === process.env.REACT_APP_USERNAME && password === process.env.REACT_APP_PSW) {
@@ -27,6 +27,7 @@ const Admin = () => {
       alert('Invalid credentials');
     }
   };
+
   // Fetch products, orders, users 
   useEffect(() => {
     if (showForm) {
@@ -63,28 +64,30 @@ const Admin = () => {
     fetchUsers();
   }, []);
 
-  useEffect(() => {
+
+
+    useEffect(() => {
     if (showOrders) {
       const fetchOrders = async () => {
         try {
-          setLoading(true);
-          const ordersCollection = collection(db, "orders");
-          const orderSnapshot = await getDocs(ordersCollection);
+          setLoading(true); // Set loading state to true
+          const ordersCollection = collection(db, "orders"); // get into orders collection
+          const orderSnapshot = await getDocs(ordersCollection); // get what in orders collection
           const orderList = orderSnapshot.docs.map((doc) => ({
             ...doc.data(),
             id: doc.id,
-          }));
-          setOrders(orderList);
+          })); // Map documents to order objects
+          setOrders(orderList); // Set orders state
         } catch (error) {
-          console.error("Error fetching orders:", error);
-          alert("Failed to fetch orders.");
+          console.error("Error fetching orders:", error); // Log error
+          alert("Failed to fetch orders."); // Show alert
         } finally {
           setLoading(false);
         }
       };
-      fetchOrders();
+      fetchOrders(); 
     }
-  }, [showOrders]);
+  }, [showOrders]); 
 
   const handleSubmitProduct = async (e) => {
     e.preventDefault();
