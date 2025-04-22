@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { addDoc, collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/connection";
+import { useNavigate } from 'react-router-dom';
+
 
 const Admin = () => {
   const [name, setName] = useState("");
@@ -16,6 +18,8 @@ const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
 
 
   // admin login  working with .env for hide login user and pswrd...
@@ -184,6 +188,13 @@ const Admin = () => {
         >
           {showOrders ? "Hide Orders" : "See Orders"}
         </button>
+        <button
+  className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition"
+  onClick={() => navigate('/')}
+>
+  Go Home
+</button>
+
       </div>
 
       {/* Add Product Form */}
@@ -293,7 +304,6 @@ const Admin = () => {
                           <p className="font-semibold">Product {index + 1}</p>
                           <p > Product Name : {product.name} </p>
                           <p>Quantity: {product.quantity}</p>
-                          <p>Size: {product.size}</p>
                         </div>
                       ))}
                     </div>
@@ -304,7 +314,7 @@ const Admin = () => {
                     className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
                     onClick={() => handleDelete("orders", order.id, setOrders, orders)}
                   >
-                    Delete
+                    Delete Order
                   </button>
                 </div>
               </div>

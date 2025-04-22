@@ -8,7 +8,7 @@ const Products = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    const [size, setSize] = useState("5ml");
+    
     const [phone, setPhone] = useState("");
     const [userName, setUserName] = useState("");
     const [address, setAddress] = useState("");
@@ -54,7 +54,6 @@ const Products = () => {
     const handleAddToCart = () => {
         const cartItem = {
             name: selectedProduct.name,
-            size,
             quantity,
         };
         // adding to cart
@@ -185,7 +184,6 @@ const Products = () => {
                                         >
                                             <div>
                                                 <h3 className="text-lg font-semibold">{item.name}</h3>
-                                                <p className="text-sm">Size: {item.size}</p>
                                                 <p className="text-sm">Quantity: {item.quantity}</p>
                                             </div>
                                             <button
@@ -298,7 +296,7 @@ const Products = () => {
                                 alt={product.name}
                                 className="h-auto max-h-[100px] xs:max-h-[150px] sm:max-h-[200px] md:max-h-[250px] lg:max-h-[300px] xl:max-h-[350px] rounded-lg object-contain mb-4 xs:mb-6 sm:mb-8"
                             />
-                            <h1 className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold font-charm mb-2 xs:mb-4 sm:mb-6">{product.name}</h1>
+                            <h1 className="text-base xs:text-lg sm:text-xl md:text-2xl font-semibold mb-2 xs:mb-4 sm:mb-6">{product.name}</h1>
                             <p className="text-xs xs:text-sm sm:text-base md:text-lg text-gray-500 mb-2 xs:mb-4 sm:mb-6">{product.description}</p>
                             <h1 className="text-sm xs:text-base sm:text-lg md:text-xl font-semibold mb-2 xs:mb-4 sm:mb-6">{product.price}</h1>
                             <button
@@ -380,20 +378,6 @@ const Products = () => {
                                     min="1"
                                     className="w-full text-black border-gray-300 rounded p-2"
                                 />
-                            </div>
-
-                            {/* Size Selection */}
-                            <div className="mb-4 sm:mb-6">
-                                <label className="block text-white mb-1 sm:mb-2">Size</label>
-                                <select
-                                    value={size}
-                                    onChange={(e) => setSize(e.target.value)}
-                                    className="w-full text-black border-gray-300 rounded p-2"
-                                >
-                                    <option value="5ml">5ml</option>
-                                    <option value="10ml">10ml</option>
-                                    <option value="15ml">15ml</option>
-                                </select>
                             </div>
 
                             {/* Action Buttons */}
